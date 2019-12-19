@@ -47,6 +47,17 @@ RUN apk add --no-cache \
     rm -f ../xnat-web-${XNAT_VER}.war && \
     apk del wget
 
+RUN apk add --no-cache git && \
+    cd ${XNAT_ROOT}/build && \
+    git clone https://github.com/anygizer/xnat-pipeline-engine.git && \
+    cd xnat-pipeline-engine && \
+    ./gradlew -PadminEmail=fake@fake.fake -Pdestination=${XNAT_ROOT}/pipeline \
+              -PsiteName=XNAT -PxnatUrl=http://localhost:8080 \
+              -PsmtpServer=${SMTP_HOSTNAME} -PisForWindows=false && \
+    cp -R build/pipeline/* ${XNAT_ROOT}/pipeline && \
+    rm -Rf ${XNAT_ROOT}/build/xnat-pipeline-engine && \
+    apk del git
+
 EXPOSE 8080
 ENV XNAT_HOME=${XNAT_HOME} XNAT_DATASOURCE_USERNAME=${XNAT_DATASOURCE_USERNAME}
 

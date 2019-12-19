@@ -1,5 +1,7 @@
-# Dockerized XNAT
+# Dockerized XNAT (Pipeline Engine included)
 Use this repository to quickly deploy an [XNAT](https://xnat.org/) instance on [docker](https://www.docker.com/).
+
+> *Note!* This fork adds a [xnat-pipeline-engine](https://github.com/anygizer/xnat-pipeline-engine) installation to the docker image.
 
 ## Introduction
 
