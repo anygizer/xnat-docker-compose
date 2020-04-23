@@ -4,3 +4,5 @@
 postgres-data*
 xnat-data*
 webapps/
+xnat/pipeline.zip
+xnat/*.war

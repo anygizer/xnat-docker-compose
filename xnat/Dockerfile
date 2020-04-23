@@ -19,10 +19,11 @@ ARG SMTP_PASSWORD
 
 ADD make-xnat-config.sh /usr/local/bin/make-xnat-config.sh
 ADD wait-for-postgres.sh /usr/local/bin/wait-for-postgres.sh
+ADD xnat-web-${XNAT_VER}.war /tmp/xnat-web-${XNAT_VER}.war
+ADD pipeline.zip /tmp/pipeline.zip
 
 RUN apk add --no-cache \
         postgresql-client \
-        wget \
     && \
     rm -rf $CATALINA_HOME/webapps/* && \
     mkdir -p \
@@ -41,22 +42,14 @@ RUN apk add --no-cache \
     /usr/local/bin/make-xnat-config.sh && \
     rm /usr/local/bin/make-xnat-config.sh && \
     cd $CATALINA_HOME/webapps/ && \
-    wget https://api.bitbucket.org/2.0/repositories/xnatdev/xnat-web/downloads/xnat-web-${XNAT_VER}.war && \
+    mv /tmp/xnat-web-${XNAT_VER}.war ./xnat-web-${XNAT_VER}.war && \
     cd ${TOMCAT_XNAT_FOLDER} && \
     unzip -o ../xnat-web-${XNAT_VER}.war && \
-    rm -f ../xnat-web-${XNAT_VER}.war && \
-    apk del wget
+    rm -f ../xnat-web-${XNAT_VER}.war
 
-RUN apk add --no-cache git && \
-    cd ${XNAT_ROOT}/build && \
-    git clone https://github.com/anygizer/xnat-pipeline-engine.git && \
-    cd xnat-pipeline-engine && \
-    ./gradlew -PadminEmail=fake@fake.fake -Pdestination=${XNAT_ROOT}/pipeline \
-              -PsiteName=XNAT -PxnatUrl=http://localhost:8080 \
-              -PsmtpServer=${SMTP_HOSTNAME} -PisForWindows=false && \
-    cp -R build/pipeline/* ${XNAT_ROOT}/pipeline && \
-    rm -Rf ${XNAT_ROOT}/build/xnat-pipeline-engine && \
-    apk del git
+RUN cd ${XNAT_ROOT} && \
+    unzip /tmp/pipeline.zip && \
+    rm /tmp/pipeline.zip
 
 EXPOSE 8080
 ENV XNAT_HOME=${XNAT_HOME} XNAT_DATASOURCE_USERNAME=${XNAT_DATASOURCE_USERNAME}
