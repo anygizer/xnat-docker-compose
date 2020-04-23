@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 services:
   xnat-web:
     build:
@@ -26,6 +26,8 @@ services:
       - ./xnat-data/home/logs:/data/xnat/home/logs
       - ./xnat-data/home/plugins:/data/xnat/home/plugins
       - ./xnat-data/archive:/data/xnat/archive
+      # for detailed info on imports
+      - ./xnat-data/prearchive:/data/xnat/prearchive
       - ./xnat-data/build:/data/xnat/build
       - ./xnat-data/pipeline/logs:/data/xnat/pipeline/logs
       - /var/run/docker.sock:/var/run/docker.sock
@@ -37,10 +39,15 @@ services:
 
   xnat-db:
     build: ./postgres
+    # for connecting from an IDE
+    ports:
+      - "15432:5432"
     expose:
       - "5432"
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+#      - ./postgres-data:/var/lib/postgresql/data
+# should be virtual volume on Windows for now, see https://github.com/docker/for-win/issues/39
+      - pgdata:/var/lib/postgresql/data
 
   xnat-nginx:
     build: ./nginx
