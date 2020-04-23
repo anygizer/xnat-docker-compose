@@ -6,7 +6,7 @@ services:
     build:
       context: ./xnat
       args:
-        XNAT_VER: '1.7.5.6'
+        XNAT_VER: '1.7.6-dcm-ext-SNAPSHOT'
         SMTP_ENABLED: 'false'
         SMTP_HOSTNAME: fake.fake
         SMTP_PORT:
