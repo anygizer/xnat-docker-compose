@@ -112,6 +112,47 @@ View a particular log
 $ docker-compose exec xnat-web cat /usr/local/tomcat/logs/catalina.2018-10-03.log
 ```
 
+### Dump / restore the database
+
+Useful when a docker volume is used in place of a mounted folder (mount-bind) as the data storage (i.e. on Windows).
+
+Dump the XNAT db into sql file in the current working directory on the host
+
+```bash/cmd/powershell
+$ docker-compose exec xnat-db pg_dump -cC xnat -U postgres > dump_xnat.sql
+```
+
+> **NOTE!** Remember about Linux/Windows line endings.
+There was a problem restoring XNAT db from a dump with Windows line endings.
+
+Following commands dump data to the mounted folder and add date to the dump file name
+
+*bash/cmd*
+
+```bash/cmd
+$ docker-compose exec -T xnat-db bash -c "pg_dump -cC -U postgres xnat > /backups/xnat-$(date +%Y-%m-%d).sql"
+```
+
+*PowerShell*
+
+```powershell
+$ docker-compose exec -T xnat-db bash -c "pg_dump -cC -U postgres xnat > /backups/xnat-`$(date +%Y-%m-%d).sql"
+```
+
+or as a `tar.gz` archive in *bash/cmd*
+
+```bash/cmd
+$ docker-compose exec -T xnat-db bash -c "pg_dump -cC -U postgres -F t xnat | gzip >/backups/xnat-$(date +%Y-%m-%d).tar.gz"
+```
+
+in *PowerShell* use the same command, but with escaped `$` sign (use a single backtick `` ` `` before it).
+
+Restore data from the SQL dump in the current directory on the host
+
+```bash/cmd/powershell
+$ docker-compose exec -T xnat-db psql -U postgres < dump.sql > log.txt 2> error.log
+```
+
 ### Controlling Instances
 
 #### Stop Instances

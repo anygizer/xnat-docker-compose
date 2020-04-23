@@ -1,4 +1,6 @@
 version: '2.1'
+volumes:
+  pgdata:
 services:
   xnat-web:
     build:
@@ -48,6 +50,8 @@ services:
 #      - ./postgres-data:/var/lib/postgresql/data
 # should be virtual volume on Windows for now, see https://github.com/docker/for-win/issues/39
       - pgdata:/var/lib/postgresql/data
+      # for db dumps:
+      - ./postgres-backups:/backups
 
   xnat-nginx:
     build: ./nginx

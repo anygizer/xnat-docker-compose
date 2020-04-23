@@ -2,6 +2,7 @@
 *.swp
 *.swo
 postgres-data*
+postgres-backups
 xnat-data*
 webapps/
 xnat/pipeline.zip
